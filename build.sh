@@ -33,6 +33,7 @@ xcrun swiftc \
 
 echo "→ Bundling..."
 cp Info.plist "$APP/Contents/"
+cp Resources/AppIcon.icns "$APP/Contents/Resources/"
 
 echo "→ Signing..."
 codesign --force --entitlements ScreenNotepad.entitlements -s - "$APP"
