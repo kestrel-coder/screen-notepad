@@ -29,9 +29,8 @@ final class FloatingPanelController: NSWindowController {
     }
 
     func show() {
-        window?.orderFrontRegardless()
+        window?.makeKeyAndOrderFront(nil)
         NSApp.activate(ignoringOtherApps: true)
-        window?.makeKey()
         NotificationCenter.default.post(name: .notepadDidShow, object: nil)
         startMonitor()
     }

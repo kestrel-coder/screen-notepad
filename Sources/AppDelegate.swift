@@ -7,7 +7,9 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     private var statusItem: NSStatusItem!
 
     func applicationDidFinishLaunching(_ notification: Notification) {
+        UserDefaults.standard.set(500, forKey: "NSInitialToolTipDelay")
         AXIsProcessTrustedWithOptions([kAXTrustedCheckOptionPrompt.takeUnretainedValue() as String: true] as CFDictionary)
+        setupAppMenu()
         setupMenuBar()
         panelController = FloatingPanelController(
             settings: NotepadSettings.shared,
@@ -20,6 +22,31 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         NotificationCenter.default.addObserver(
             self, selector: #selector(handleReregisterHotkey),
             name: .reregisterHotkey, object: nil)
+    }
+
+    private func setupAppMenu() {
+        let main = NSMenu()
+
+        let appItem = NSMenuItem()
+        main.addItem(appItem)
+        let appMenu = NSMenu()
+        appMenu.addItem(NSMenuItem(title: "退出", action: #selector(NSApplication.terminate(_:)), keyEquivalent: "q"))
+        appItem.submenu = appMenu
+
+        let editItem = NSMenuItem()
+        main.addItem(editItem)
+        let editMenu = NSMenu(title: "Edit")
+        editMenu.addItem(NSMenuItem(title: "撤销", action: Selector(("undo:")), keyEquivalent: "z"))
+        editMenu.addItem(NSMenuItem(title: "重做", action: Selector(("redo:")), keyEquivalent: "Z"))
+        editMenu.addItem(.separator())
+        editMenu.addItem(NSMenuItem(title: "剪切", action: #selector(NSText.cut(_:)),       keyEquivalent: "x"))
+        editMenu.addItem(NSMenuItem(title: "复制", action: #selector(NSText.copy(_:)),      keyEquivalent: "c"))
+        editMenu.addItem(NSMenuItem(title: "粘贴", action: #selector(NSText.paste(_:)),     keyEquivalent: "v"))
+        editMenu.addItem(.separator())
+        editMenu.addItem(NSMenuItem(title: "全选", action: #selector(NSText.selectAll(_:)), keyEquivalent: "a"))
+        editItem.submenu = editMenu
+
+        NSApp.mainMenu = main
     }
 
     private func setupMenuBar() {

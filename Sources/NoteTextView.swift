@@ -1,5 +1,16 @@
 import AppKit
 import SwiftUI
+import Carbon.HIToolbox
+
+private final class InnerTextView: NSTextView {
+    override func keyDown(with event: NSEvent) {
+        switch Int(event.keyCode) {
+        case kVK_Home: moveToBeginningOfLine(nil)
+        case kVK_End:  moveToEndOfLine(nil)
+        default:       super.keyDown(with: event)
+        }
+    }
+}
 
 struct NoteTextView: NSViewRepresentable {
     @Binding var text: String
@@ -9,8 +20,15 @@ struct NoteTextView: NSViewRepresentable {
     func makeCoordinator() -> Coordinator { Coordinator(self) }
 
     func makeNSView(context: Context) -> NSScrollView {
-        let scrollView = NSTextView.scrollableTextView()
-        guard let textView = scrollView.documentView as? NSTextView else { return scrollView }
+        let textView = InnerTextView()
+        textView.minSize = NSSize(width: 0, height: 0)
+        textView.maxSize = NSSize(width: CGFloat.greatestFiniteMagnitude, height: CGFloat.greatestFiniteMagnitude)
+        textView.isVerticallyResizable = true
+        textView.isHorizontallyResizable = false
+        textView.autoresizingMask = [.width]
+        textView.textContainer?.widthTracksTextView = true
+        textView.textContainer?.containerSize = NSSize(width: CGFloat.greatestFiniteMagnitude,
+                                                       height: CGFloat.greatestFiniteMagnitude)
 
         textView.delegate = context.coordinator
         context.coordinator.textView = textView
@@ -30,6 +48,8 @@ struct NoteTextView: NSViewRepresentable {
         textView.isAutomaticLinkDetectionEnabled = false
         textView.textContainerInset = NSSize(width: 10, height: 10)
 
+        let scrollView = NSScrollView()
+        scrollView.documentView = textView
         scrollView.backgroundColor = .clear
         scrollView.drawsBackground = false
         scrollView.hasVerticalScroller = true
@@ -50,16 +70,13 @@ struct NoteTextView: NSViewRepresentable {
     func updateNSView(_ scrollView: NSScrollView, context: Context) {
         guard let textView = scrollView.documentView as? NSTextView else { return }
 
-        // Sync text only when changed externally (e.g., clear button)
         if textView.string != text {
             textView.string = text
         }
 
-        // Always keep typing attributes current
         textView.typingAttributes = makeAttrs()
         textView.insertionPointColor = textColor
 
-        // Re-apply to existing text only when settings actually changed
         let coord = context.coordinator
         if coord.lastFontSize != fontSize || !coord.lastTextColor.isEqual(textColor) {
             coord.lastFontSize = fontSize
