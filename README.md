@@ -8,6 +8,26 @@ A lightweight floating notepad for macOS, summoned instantly with a global hotke
 
 ---
 
+## Download & Install
+
+**[Download ScreenNotepad-v0.1.0.dmg](https://github.com/kestrel-coder/screen-notepad/releases/latest/download/ScreenNotepad-v0.1.0.dmg)**
+
+> Requires macOS 13 or later, Apple Silicon Mac (M1/M2/M3/M4). Intel Mac is not supported.
+
+**Steps:**
+
+1. Click the link above to download the `.dmg` file
+2. Open the downloaded file — a window appears with the app icon and an Applications folder
+3. Drag **ScreenNotepad.app** into the **Applications** folder
+4. Go to your Applications folder and find ScreenNotepad
+5. **Right-click** the app icon → click **Open** → click **Open** again in the dialog
+
+   > macOS will warn "developer cannot be verified" on first launch. This is normal for apps distributed outside the App Store. Right-clicking and choosing Open bypasses this once — after that it opens normally.
+
+6. Done — the app runs silently in the menu bar. Press **F16** to show the notepad.
+
+---
+
 ## Features
 
 - **Global hotkey** — default `F16`, fully customizable. Works even when another app is in fullscreen.
